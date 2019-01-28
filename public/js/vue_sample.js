@@ -46,7 +46,8 @@ function app() {
 
         socket.onopen = function () {
             data.errorState.wssDisconnect = false;
-            sendWSSMessage('REQUEST_STATION_LIST', null);
+            //sendWSSMessage('REQUEST_STATION_LIST', null);
+            sendWSSMessage('REQUEST_DB_STATION_LIST', null);
 
 //            sendWSSMessage('REQUEST_STATUS', null);
 

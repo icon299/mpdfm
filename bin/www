@@ -12,7 +12,7 @@ var http = require('http');
 const WebSocket = require('ws');
 var wsApp = require('../controller/wss.js');
 var mpdClient = require('../controller/mpdclient.js');
-var sql = require('../controller/sqlite.js');
+//var sql = require('../controller/sqlite.js');
 
 /**
  * Get port from environment and store in Express.
