@@ -76,6 +76,7 @@ module.exports = {
                         fs.readFile(stationFile, 'utf8', function (err, data) {
                             if (err) {
                                 console.error('Can\'t read station file: "' + stationFile + '": ' + err);
+                                sendWSSMessage(ws, 'ERROR_READ_FILE', 'Can\'t read station file');
                                 return;
                             }
                             try {
@@ -83,6 +84,7 @@ module.exports = {
                                  sendWSSMessage(ws, 'STATION_LIST', stationList);
                             } catch (error) {
                                 console.error('Can\'t interpret station file: "' + stationFile + '": ' + error);
+                                sendWSSMessage(ws, 'ERROR_READ_FILE', 'Can\'t parse station file');
                             }
                         });
                         break;

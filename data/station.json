@@ -111,11 +111,11 @@
         "stream": "http://193.242.149.55:8000/kfm"
     },
     {   "id": 19,
-        "station": "Teploe Radio",
+        "station": "Radio Kazak FM",
         "desc": "Songs with a warm mood, rare songs, musical experiments in the form of remixes.",
         "logo": "http://teploe.net/css/logo.png",
         "stream": "http://radio2.teploe.net:8000/teploeradio"
-    },
+    },,
     {   "id": 20,
         "station": "Power Hit Мурманск",
         "desc": "Radio station broadcasts in Murmansk and the Murmansk region.",

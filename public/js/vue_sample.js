@@ -84,8 +84,11 @@ function app() {
                 case "ELAPSED":
                     setElapsedTime(msg.data.elapsed);
                     break;
+                case "ERROR_READ_FILE":
+                    showError(msg.data);
+                    break;
                 case "MPD_OFFLINE":
-
+                    showError('server can\'t reach MPD - trying to reconnect...')
                     data.status = 'loading';
                     data.currentStation = null;
                     data.elapsed = '0:00';
@@ -313,6 +316,24 @@ function app() {
 
     cutString = function (data,maxlen){
         return data.substring(0, maxlen-3) + '...';
+    }
+
+    showError = function(msg) {
+        var errorNode = document.getElementById("app");
+            var errorContainer = document.createElement('div');
+            errorContainer.className = "error-message";
+        errorNode.appendChild(errorContainer);
+        var errorContent = document.createElement('div');
+            errorContent.class = "pure-g error-content";
+        errorContainer.appendChild(errorContent);
+        var errorBox =  document.createElement('div');
+            errorBox.className = "pure-u-1 l-box";
+        errorContent.appendChild(errorBox);
+        var errorHeading = document.createElement('p');
+            errorHeading.className = "error-heading";
+        errorBox.appendChild(errorHeading);
+
+        errorHeading.innerHTML = msg;
     }
 
     makeList = function(listData) {
