@@ -24,15 +24,14 @@ function selectall(callback) {
   });
 };
 
-function insert(data) {
+function insert(data, callback) {
   db.insert(data, function (err,newData) {
     if(err) {
-      console.log(err);
+      console.log(err.message);
     } else {
-      console.log("Inserting data OK.");
+      callback(err, newData);
     }
-
-})
+  });
 };
 
 
@@ -46,7 +45,7 @@ var self = module.exports = {
       selectall(callback);
     },
 
-    insert: function insertFile(data) {
-      insert(data);
+    insert: function insertFile(data,callback) {
+      insert(data,callback);
     }
 }
