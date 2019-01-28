@@ -14,10 +14,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.get('/1', function (req,res,next) {
-  res.send("dfdsfd");
-  next();;
-})
+
 
 app.use(function(req, res, next) {
   res.redirect('/404.html');
