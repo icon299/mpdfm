@@ -115,12 +115,18 @@
         "desc": "Songs with a warm mood, rare songs, musical experiments in the form of remixes.",
         "logo": "http://teploe.net/css/logo.png",
         "stream": "http://radio2.teploe.net:8000/teploeradio"
-    },,
+    },
     {   "id": 20,
         "station": "Power Hit Мурманск",
         "desc": "Radio station broadcasts in Murmansk and the Murmansk region.",
         "logo": "http://online-red.com/images/radio-logo/power-hit-radio.png",
         "stream": "http://radio.dline-media.com/powerhit128"
+    },
+    {   "id": 21,
+        "station": "AutoLife",
+        "desc": "Azerbaijani automotive online radio station.",
+        "logo": "https://radio.autolife.audio:8080/media/tracks/default_track_img.png",
+        "stream": "http://radio.autolife.audio:8000/radio"
     }
 
 ]

@@ -186,3 +186,18 @@ html, button, input, select, textarea,
     line-height: 1.5;
     font-family: 'Oswald', sans-serif;
 }
+.menuheader {
+    background-color: black;
+    color: white;
+    position: relative;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    padding-right: 1em;
+    padding-left: 1em;
+}
+
+.menuheader-context {
+    max-width: 768px;
+    margin: 5px auto;
+}

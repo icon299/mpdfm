@@ -73,30 +73,22 @@ module.exports = {
                 debug('Received %s with %o', msg.type, msg.data);
                 switch(msg.type) {
                     case "REQUEST_DB_STATION_LIST":
-                        db.connect();
-                        db.selectall(function (err,msg) {
+                        db.connect(function(err, count){
                             if(err) {
-                                console.log(err);
-                            } else{
-                                sendWSSMessage(ws, 'STATION_LIST', msg);
+                                sendWSSMessage(ws, 'ERROR_READ_FILE', err);
                             }
                         });
 
-                        // fs.readFile(stationFile, 'utf8', function (err, data) {
-                        //     if (err) {
-                        //         console.error('Can\'t read station file: "' + stationFile + '": ' + err);
-                        //         sendWSSMessage(ws, 'ERROR_READ_FILE', 'Can\'t read station file');
-                        //         return;
-                        //     }
-                        //     try {
-                        //         var stationList = JSON.parse(data);
-                        //          sendWSSMessage(ws, 'STATION_LIST', stationList);
-                        //     } catch (error) {
-                        //         console.error('Can\'t interpret station file: "' + stationFile + '": ' + error);
-                        //         sendWSSMessage(ws, 'ERROR_READ_FILE', 'Can\'t parse station file');
-                        //     }
-                        // });
+                        db.selectall(function (err, msg) {
+                            if(err) {
+                                sendWSSMessage(ws, 'ERROR_READ_FILE', err);
+                            } else{
+
+                                sendWSSMessage(ws, 'DB_STATION_LIST', msg);
+                            }
+                        });
                         break;
+
                     case "REQUEST_STATION_LIST":
 
                         fs.readFile(stationFile, 'utf8', function (err, data) {
@@ -184,6 +176,16 @@ module.exports = {
                                 sendWSSMessage(ws, 'PLAYLISTS', playlists);
                             }
                         });
+                        break;
+                    case "INSERT_STATION":
+                        console.log("INSERT: " + msg.data);
+                        db.insert(msg.data, function (err, newDoc) {
+                            if (err) {
+                                console.log("INSERT ERROR");
+                            } else
+                            sendWSSMessage(ws, 'DB_MESSAGE', newDoc);
+                        })
+
                         break;
                 }
 

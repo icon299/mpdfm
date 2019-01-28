@@ -65,6 +65,13 @@ function app() {
                     //showStantionList(msg.data);
 
                     break;
+                case "DB_STATION_LIST":
+                    data.stationList = msg.data;
+                    makeList(data.stationList);
+                    sendWSSMessage('REQUEST_STATUS', null);
+
+                    // makeList(data.stationList);
+                    break;
                 case "STATION_LIST":
                     data.stationList = msg.data;
                     makeList(data.stationList);
@@ -103,13 +110,6 @@ function app() {
                          }
                         }
                         , 3000);
-
-                    // setTimeout(() => {
-                    //     if((Date.now()-lastMpdReconnectAttempt) >= 2500) {
-                    //         lastMpdReconnectAttempt = Date.now();
-                    //         sendWSSMessage('REQUEST_STATUS', null);
-                    //     }
-                    // }, 3000);
                     return;
             }
 
@@ -320,9 +320,17 @@ function app() {
     }
 
     showError = function(msg) {
+
+        if(document.getElementById("error-container")) {
+
+            errorHeading.innerHTML += msg;
+
+        } else {
+
         var errorNode = document.getElementById("app");
             var errorContainer = document.createElement('div');
             errorContainer.className = "error-message";
+            errorContainer.id = "error-container";
         errorNode.appendChild(errorContainer);
         var errorContent = document.createElement('div');
             errorContent.class = "pure-g error-content";
@@ -335,14 +343,25 @@ function app() {
         errorBox.appendChild(errorHeading);
 
         errorHeading.innerHTML = msg;
+        }
     }
 
     makeList = function(listData) {
+
         var myNode = document.getElementById("rs");
         while (myNode.firstChild) {
             myNode.removeChild(myNode.firstChild);
         }
 
+        var myNode = document.getElementById("error-message");
+        if (myNode) {
+        while (myNode.firstChild) {
+            myNode.removeChild(myNode.firstChild);
+        }
+
+
+        myNode.remove();
+    }
         listData.forEach(function (item) {
 
             var listContainer = document.createElement('div');

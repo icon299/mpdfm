@@ -1,0 +1,48 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Untitled</title>
+        <link rel="stylesheet" href="css/pure-min.css">
+        <link rel="author" href="humans.txt">
+    </head>
+    <body>
+<form class="pure-form pure-form-aligned" name="insertform" action="" method="POST">
+  <h1>Добавить станцию в базу</h1>
+    <fieldset>
+        <div class="pure-control-group">
+            <label for="sName">Station Name</label>
+            <input id="sName" name="sName"type="text" placeholder="">
+            <span class="pure-form-message-inline">This is a required field.</span>
+        </div>
+
+        <div class="pure-control-group">
+            <label for="sStream">Station stream</label>
+            <input id="sStream" name="sStream"type="text" placeholder="">
+        </div>
+
+        <div class="pure-control-group">
+            <label for="sDesc">Station Desc</label>
+            <input id="sDesc" name="sDesc" type="text" placeholder="">
+        </div>
+
+        <div class="pure-control-group">
+            <label for="sLogo">Station Logo</label>
+            <input id="sLogo" name="sLogo" type="text" placeholder="">
+        </div>
+
+        <div class="pure-controls">
+            <button type="submit" class="pure-button pure-button-primary">Add</button>
+        </div>
+    </fieldset>
+</form>
+<p id="json"></p>
+
+        <script src="js/vendor/ReconnectingWebSocket.js"></script>
+        <script src="js/db.js"></script>
+    </body>
+</html>
+
+
