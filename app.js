@@ -7,6 +7,7 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var station = require('./routes/station');
+var fileup = require('./controller/fileclient.js');
 var app = express();
 
 app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
@@ -19,8 +20,13 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/station', station);
 
 app.get('/db', function (req,res){
-  res.sendFile(path.join(__dirname,'public/db.html'));  // body...
+  res.sendFile(path.join(__dirname,'/public/db.html'));  // body...
 });
+
+// app.get('/file', function(req,res){
+
+
+// });
 
 // app.post('/process', function (req,res) {
 //   console.log('Form (from querystring): ' + req.body);

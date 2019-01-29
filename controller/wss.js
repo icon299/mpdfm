@@ -5,6 +5,7 @@ var path = require('path');
 var mpdClient = require("./mpdclient.js");
 var debug = require('debug')('mpd.fm:wss');
 var db = require('./database.js')
+var fileup = require('./fileclient.js');
 var WebSocket = require('ws');
 
 var stationFile = process.env.STATION_FILE || path.join(__dirname, '../data/stations.json');
@@ -85,6 +86,10 @@ module.exports = {
                             } else{
 
                                 sendWSSMessage(ws, 'DB_STATION_LIST', msg);
+                                // fileup.savefileJSON(msg, function(){
+                                //     console.log('file saved');
+                                // })
+
                             }
                         });
                         break;
@@ -185,6 +190,19 @@ module.exports = {
                             } else
                             sendWSSMessage(ws, 'DB_MESSAGE', newDoc);
                         })
+
+                        break;
+
+                    case "FILE_UPLOAD":
+                        console.log("FILE_UPLOAD: " + msg.data);
+                        fileup.download_logo( msg.data, function(err,file) {
+                            if (err) {
+                                console.log("UPLOAD ERROR");
+                            } else {
+                            sendWSSMessage(ws, 'UPLOAD_OK', file);
+                                console.log("UPLOAD OK");
+                            }
+                        });
 
                         break;
                 }

@@ -11,7 +11,7 @@ sendWSSMessage = function(type, data) {
     try {
         socket.send(JSON.stringify(msg));
     } catch (error) {
-        errorState.wssDisconnect = true;
+        wssDisconnect = true;
     }
 };
 
@@ -22,7 +22,8 @@ connectWSS = function() {
   socket.onopen = function () {
       wssDisconnect = false;
       sendWSSMessage('REQUEST_DB_STATION_LIST', null);
-      console.log('Connect to socket OK');
+      //sendWSSMessage('FILE_UPLOAD', 'http://online-red.com/images/radio-logo/respublika.png');
+      //console.log('Connect to socket OK');
   };
 
   socket.onmessage = function (message) {
@@ -30,15 +31,27 @@ connectWSS = function() {
     var msg = JSON.parse(message.data);
     switch(msg.type) {
       case "DB_STATION_LIST":
-        //var p = document.getElementById("json");
-        //p.innerHTML = JSON.stringify(msg);
+        var p = document.getElementById("json");
+        p.innerHTML = JSON.stringify(msg.data);
+
 
       break;
 
       case "DB_MESSAGE":
         sendWSSMessage('REQUEST_DB_STATION_LIST', null);
         var p = document.getElementById("json");
-        p.innerHTML = msg.data;
+        p.innerHTML = 'Insert station: ' + msg.data.station + ' OK.';
+        clearForm();
+
+        //data.stationList = msg.data;
+        //makeList(data.stationList);
+//        sendWSSMessage('REQUEST_STATUS', null);
+      break;
+      case "UPLOAD_OK":
+      console.log('UPLOAD_OK');
+        var p = document.getElementById("json");
+        p.innerHTML = 'UPLOAD OK :' + msg.data;
+
 
         //data.stationList = msg.data;
         //makeList(data.stationList);
@@ -51,17 +64,34 @@ connectWSS = function() {
     };
   };
 };
+function clearForm() {
+
+ var form = document.forms["insertform"];
+ form.sName.value = '';
+ sDesc.value = '';
+ sLogo.value = '';
+ sStream.value = '';
+}
 
  document.forms["insertform"].onsubmit = function(){
-  var message = {
-    station:this.sName.value,
-    desc: this.sDesc.value,
-    logo: this.sLogo.value,
-    stream: this.sStream.value
-  }
-    sendWSSMessage('INSERT_STATION', message)
-    return false;
-  }
+  if (this.sStream.value != '') {
+    var message = {
+      station:this.sName.value,
+      desc: this.sDesc.value,
+      logo: this.sLogo.value,
+      stream: this.sStream.value
+    }
+  sendWSSMessage('INSERT_STATION', message)
+  return false;
+  } else {
+  var p = document.getElementById("json");
+        p.innerHTML = 'Station stream required.';
+  return false;
+}
+}
+
 
 
 connectWSS();
+clearForm();
+

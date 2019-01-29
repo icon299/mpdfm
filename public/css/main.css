@@ -201,3 +201,7 @@ html, button, input, select, textarea,
     max-width: 768px;
     margin: 5px auto;
 }
+
+.input-field {
+    padding: .2em !important;
+}
