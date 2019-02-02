@@ -42,16 +42,15 @@ function app() {
         //var url = 'ws://192.168.1.100:4200';//(location.port ? ':'+location.port: '');
         var url = 'ws://'+location.hostname+(location.port ? ':'+location.port: '');
         //socket = new ReconnectingWebSocket(url, null, {debug: false, reconnectInterval: 3000});
-        socket = new ReconnectingWebSocket(url, null, {reconnectInterval: 3000});
+        socket = new ReconnectingWebSocket(url, null, {reconnectInterval: 10000});
+
+        socket.onerror = socket.onclose = function(err) {
+            data.errorState.wssDisconnect = true;
+        };
 
         socket.onopen = function () {
-            data.errorState.wssDisconnect = false;
-            //sendWSSMessage('REQUEST_STATION_LIST', null);
-            sendWSSMessage('REQUEST_DB_STATION_LIST', null);
-
-//            sendWSSMessage('REQUEST_STATUS', null);
-
-            //sendWSSMessage('PLAYLISTS', null);
+                data.errorState.wssDisconnect = false;
+                sendWSSMessage('REQUEST_DB_STATION_LIST', null);
         };
 
         socket.onmessage = function (message) {
@@ -116,9 +115,7 @@ function app() {
             data.errorState.mpdServerDisconnect = false;
         };
 
-        socket.onerror = socket.onclose = function(err) {
-            data.errorState.wssDisconnect = true;
-        };
+
     };
 
     showStantionList = function(msg) {
@@ -311,7 +308,7 @@ function app() {
         try {
             socket.send(JSON.stringify(msg));
         } catch (error) {
-            errorState.wssDisconnect = true;
+            data.errorState.wssDisconnect = true;
         }
     }
 
@@ -355,25 +352,20 @@ function app() {
 
         var myNode = document.getElementById("error-message");
         if (myNode) {
-        while (myNode.firstChild) {
-            myNode.removeChild(myNode.firstChild);
+            while (myNode.firstChild) {
+                myNode.removeChild(myNode.firstChild);
+            }
+            myNode.remove();
         }
 
-
-        myNode.remove();
-    }
         listData.forEach(function (item) {
 
             var listContainer = document.createElement('div');
             listContainer.className = "pure-g";
-            listContainer.id = "clickme";
-
-
 
             listContainer.addEventListener('click', function (event) {
                 onPlayStation(item.stream);
             });
-
 
             var listBox = document.createElement('div');
             listBox.className = "pure-u-1-4 l-box";
@@ -408,7 +400,13 @@ function app() {
 
             listContainer.appendChild(stationText);
 
+            //var sepLine = document.createElement('hr');
+            //sepLine.className = "sep-line";
+
+            //<hr class="sep-line">
+
             document.getElementById('rs').appendChild(listContainer);
+            //document.getElementById('rs').appendChild(sepLine);
         });
 
     }

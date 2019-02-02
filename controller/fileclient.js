@@ -1,36 +1,43 @@
 var http = require('http');
+https = require('https');
 var fs = require('fs');
-var Stream = require('stream').Transform;
+var fpath = __dirname + '/../public/img/';
+var filename = 'station.json';
 
 
 var download_file_httpget = function(url, callback) {
 
-  var request = http.get(url, function(res) {
-    var file = fs.createWriteStream('../mpd.fm/public/img/image.png');
-    //var file_name = url.parse(url).pathname.split('/').pop();
-
-    res.on('data',function(chunk){
-      file.write(chunk);
-    });
-
-   res.on('end', function(){
-      file.end();
-      callback(null, url);
-    });
+  var client = http;
+  if (url.toString().indexOf("https") === 0){
+    client = https;
+  }
+  var request = client.get(url, function(res) {
+    if (res.statusCode == 200) {
+      var file_name = url.split('/').pop();
+      //var file_name = url.parse(url).pathname.split('/').pop();
+      var file = fs.createWriteStream( fpath + file_name);
+      res.on('data',function(chunk){
+        file.write(chunk);
+      });
+      res.on('end', function(){
+        file.end();
+        callback(null, url);
+      });
+    } else {
+      callback('404 File not found');
+    };
   });
-}
+};
 
 var saveasJSON = function(msg, callback) {
-  fs.writeFile('station.json', JSON.stringify(msg))
+  console.log('__dirname: ' + __dirname);
+  fs.writeFile(filename, JSON.stringify(msg), function(err){
+    if (err) {
+      calback(err);
+    }
+    callback(null, filename);
+  })
 }
-
-  // url = 'http://online-red.com/images/radio-logo/respublika.png';
-  // //url = 'http://192.168.1.100:4200/css/main.css';
-  // fileup.download_logo(url, function(file){
-  //   console.log(file)  ;
-  // });
-
-
 
 var self = module.exports = {
 
@@ -42,3 +49,5 @@ var self = module.exports = {
       saveasJSON(msg,callback);
     }
 }
+
+

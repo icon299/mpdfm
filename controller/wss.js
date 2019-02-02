@@ -36,18 +36,6 @@ function broadcastMessage(server, type, data) {
 }
 
 function objectToLowerCase(data) {
-    //return data;
-    // if(Array.isArray(data)) {
-    //     return data.map(value => objectToLowerCase(value));
-    // } else if(typeof data === 'object') {
-    //     var retData = {};
-    //     for (const [key, value] of Object.entries(data)) {
-    //         retData[key.toLowerCase()] = objectToLowerCase(value);
-    //     }
-    //     return retData;
-    // } else {
-    //     return data;
-    // }
 
     if(Array.isArray(data)) {
         return data.map(value => objectToLowerCase(value));
@@ -66,12 +54,19 @@ function objectToLowerCase(data) {
 
 module.exports = {
     init: function(wss) {
+
+        wss.on("error", function (err){
+            console.log("Caught flash policy server socket error: ")
+            console.log(err.stack)
+        });
+
         wss.on('connection', function connection(ws, req) {
 
             ws.on('message', function incoming(message) {
 
                 var msg = JSON.parse(message);
                 debug('Received %s with %o', msg.type, msg.data);
+
                 switch(msg.type) {
                     case "REQUEST_DB_STATION_LIST":
                         db.connect(function(err, count){
@@ -86,10 +81,6 @@ module.exports = {
                             } else{
 
                                 sendWSSMessage(ws, 'DB_STATION_LIST', msg);
-                                // fileup.savefileJSON(msg, function(){
-                                //     console.log('file saved');
-                                // })
-
                             }
                         });
                         break;
@@ -195,14 +186,26 @@ module.exports = {
 
                     case "FILE_UPLOAD":
                         console.log("FILE_UPLOAD: " + msg.data);
-                        fileup.download_logo( msg.data, function(err,file) {
+                        fileup.download_logo( msg.data, function(err, msg) {
                             if (err) {
-                                console.log("UPLOAD ERROR");
+                                sendWSSMessage(ws, 'UPLOAD_ERROR', err);
+                                console.log("UPLOAD ERROR: " + err);
                             } else {
-                            sendWSSMessage(ws, 'UPLOAD_OK', file);
+                            sendWSSMessage(ws, 'UPLOAD_OK', msg);
                                 console.log("UPLOAD OK");
                             }
                         });
+
+                        break;
+                    case "SAVE_JSON":
+                        console.log('json save event');
+                        fileup.savefileJSON(JSON.parse(msg.data), function(err, ret){
+                            if (err) {
+                                console.log(err);
+                            } else
+                            console.log('file ' + ret + ' saved');
+                        })
+
 
                         break;
                 }

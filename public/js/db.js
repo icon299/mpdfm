@@ -3,6 +3,8 @@ var socket = null;
 
 var  wssDisconnect = true;
 
+var station_data = null;
+
 sendWSSMessage = function(type, data) {
     var msg = {
         type: type,
@@ -15,9 +17,32 @@ sendWSSMessage = function(type, data) {
     }
 };
 
+    showError = function(msg) {
+        if(document.getElementById("error-container")) {
+            errorHeading.innerHTML += msg;
+        } else {
+          var errorNode = document.getElementById("app");
+              var errorContainer = document.createElement('div');
+              errorContainer.className = "error-message";
+              errorContainer.id = "error-container";
+          errorNode.appendChild(errorContainer);
+          var errorContent = document.createElement('div');
+              errorContent.class = "pure-g error-content";
+          errorContainer.appendChild(errorContent);
+          var errorBox =  document.createElement('div');
+              errorBox.className = "pure-u-1 l-box";
+          errorContent.appendChild(errorBox);
+          var errorHeading = document.createElement('p');
+              errorHeading.className = "error-heading";
+          errorBox.appendChild(errorHeading);
+
+          errorHeading.innerHTML = msg;
+        }
+    }
+
 connectWSS = function() {
   var url = 'ws://'+location.hostname+(location.port ? ':'+location.port: '');
-  socket = new ReconnectingWebSocket(url, null, {reconnectInterval: 3000});
+  socket = new ReconnectingWebSocket(url, null, {reconnectInterval: 10000});
 
   socket.onopen = function () {
       wssDisconnect = false;
@@ -31,8 +56,11 @@ connectWSS = function() {
     var msg = JSON.parse(message.data);
     switch(msg.type) {
       case "DB_STATION_LIST":
-        var p = document.getElementById("json");
-        p.innerHTML = JSON.stringify(msg.data);
+      //station_data = JSON.stringify(msg.data);
+        // var p = document.getElementById("json");
+        // p.innerHTML = station_data;
+        renderStationList(msg.data);
+
 
 
       break;
@@ -57,6 +85,17 @@ connectWSS = function() {
         //makeList(data.stationList);
 //        sendWSSMessage('REQUEST_STATUS', null);
       break;
+      case "UPLOAD_ERROR":
+      console.log('UPLOAD_ERROR');
+      showError(msg.data);
+        // var p = document.getElementById("json");
+        // p.innerHTML = 'UPLOAD ERROR :' + msg.data;
+
+
+        //data.stationList = msg.data;
+        //makeList(data.stationList);
+//        sendWSSMessage('REQUEST_STATUS', null);
+      break;
     }
 
     socket.onerror = socket.onclose = function(err) {
@@ -64,6 +103,16 @@ connectWSS = function() {
     };
   };
 };
+
+function renderStationList(data) {
+
+  var stationscript = document.getElementById('stationscript').innerHTML;
+
+  html = ejs.render(stationscript, {item: data});
+
+  document.getElementById('station').innerHTML = html;
+};
+
 function clearForm() {
 
  var form = document.forms["insertform"];
@@ -82,7 +131,7 @@ function clearForm() {
       stream: this.sStream.value
     }
   sendWSSMessage('INSERT_STATION', message)
-  return false;
+    return false;
   } else {
   var p = document.getElementById("json");
         p.innerHTML = 'Station stream required.';
@@ -94,4 +143,13 @@ function clearForm() {
 
 connectWSS();
 clearForm();
+
+
+
+var savetojson = document.getElementById("json-button");
+savetojson.addEventListener('click', function(e) {
+  sendWSSMessage('SAVE_JSON', station_data)
+  console.log('Click to save JSON file');
+  sendWSSMessage('FILE_UPLOAD', 'https://www.radiobells.com/stations/kuzbasfm.jpg')
+});
 

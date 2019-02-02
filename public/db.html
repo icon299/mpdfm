@@ -11,10 +11,47 @@
          <link href="https://fonts.googleapis.com/css?family=Oswald:400,500&amp;subset=cyrillic" rel="stylesheet">
 
 
-    </style>
+    <script id="stationscript" type="text/template">
+
+      <% if (item.length) { %>
+
+          <% item.forEach(function(item){ %>
+                <div class="pure-g" click="onPlayStation('<%= item.stream %>')">
+                    <div class="pure-u-1-4 l-box">
+                        <div class="station-logo">
+                                <img class="pure-img" src="<%= item.logo %>" alt="<%= item.station %>">
+                        </div>
+                    </div>
+                    <div class="pure-u-3-4 l-box station-text">
+                        <div class="station-text-inside">
+                            <p class="station-heading"><%= item.station %></p>
+                            <p><%= item.desc %></p>
+                        </div>
+                    </div>
+                </div>
+
+          <% }) %>
+
+      <% } %>
+
+
+
+    <div class="pure-g blank-radio">
+        <div class="pure-u-1-4 l-box">
+            <div class="station-logo">
+                <img class="pure-img" src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=">
+            </div>
+        </div>
+        <div class="pure-u-3-4 l-box">
+        </div>
+    </div>
+
+    </script>
+
 
     </head>
     <body>
+        <div id="app">
         <div class="content">
     <form class="pure-form pure-form-aligned" name="insertform" action="" method="POST">
     <p>Add station</p>
@@ -48,10 +85,14 @@
     </fieldset>
 </form>
 <p id="json"></p>
+<div id="station"></div>
+<button class="pure-button" id="json-button">Save to JSON</button>
 
         <script src="js/vendor/ReconnectingWebSocket.js"></script>
+        <script src="js/ejs.min.js"></script>
         <script src="js/db.js"></script>
     </div>
+</div>
     </body>
 </html>
 

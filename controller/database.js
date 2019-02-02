@@ -30,7 +30,6 @@ function selectall(callback) {
 };
 
 function insert(data, callback) {
- var countStation;
 
   db.count({}, function (err, count) {
     if(err) {
