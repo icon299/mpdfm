@@ -1,3 +1,5 @@
+
+
 .station-logo {
     position:relative;
     overflow:hidden;
@@ -74,7 +76,6 @@
     /*display: flex;*/
     display: block;
     width: 75%;
-
 }
 .station-logo {
     display: flex;
@@ -89,17 +90,20 @@
 .station-text-inside {
     margin-bottom: auto;
     margin-top: auto;
+    overflow: hidden;
     /*width: 100%*/
 
 }
 
 .station-text-inside > p {
+
     margin: 0;
 }
 
 .station-heading {
     font-weight: 500;
     /*width: 100%*/
+    overflow: hidden;
 }
 
 .error-heading {
@@ -128,6 +132,7 @@
     left: 0;
     padding-right: 1em;
     padding-left: 1em;
+    height:auto;
 }
 
 .player-content {
@@ -178,6 +183,7 @@
 .r-box {
     padding: 0.5em;
 
+
 }
 html, button, input, select, textarea,
 .pure-g [class *= "pure-u"] {
@@ -185,6 +191,7 @@ html, button, input, select, textarea,
     font-size: 0.9em;
     line-height: 1.5;
     font-family: 'Oswald', sans-serif;
+
 }
 .menuheader {
     background-color: black;
@@ -204,4 +211,34 @@ html, button, input, select, textarea,
 
 .input-field {
     padding: .2em !important;
+}
+
+.add-station {
+    background-color: white;
+    border-radius: 0px;
+    float: right;
+    margin-left: 1em;
+}
+.log-message {
+    background-color: rgb(51, 230, 51);
+    color: white;
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    padding-right: 1em;
+    padding-left: 1em;
+    margin: 0 0.5em;
+    z-index: 100;
+}
+
+.log-content {
+    max-width: 768px;
+    margin: 5px auto;
+}
+
+.log-heading {
+    font-weight: 500;
+    text-align: center;
+    margin: 0px 0px;
 }

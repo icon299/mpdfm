@@ -15,11 +15,33 @@
         <link href="https://fonts.googleapis.com/css?family=Oswald:400,500&amp;subset=cyrillic" rel="stylesheet">
 
         <!-- <link rel="stylesheet" href="css/base-min.css"> -->
+
         <link rel="stylesheet" href="css/pure-min.css">
         <link rel="stylesheet" href="css/main.css">
 
+      <script id="stationscript" type="text/template">
+        <% if (item.length) { %>
+          <% item.forEach(function(item){ %>
+                <div class="pure-g" onclick="onPlayStation('<%= item.stream %>')">
+                    <div class="pure-u-1-4 l-box">
+                        <div class="station-logo">
+                                <img class="pure-img" src="<%= item.logo %>" alt="<%= item.station %>">
+                        </div>
+                    </div>
+                    <div class="pure-u-3-4 l-box2 station-text">
+                        <div class="station-text-inside">
+                            <p class="station-heading"><%= item.station %></p>
+                            <p><%= item.desc %></p>
+                        </div>
+                    </div>
+                </div>
+          <% }) %>
+        <% } %>
+      </script>
+
     </head>
     <body>
+
 
       <div id="app">
 
@@ -41,6 +63,7 @@
           </div>
           <div class="player">
               <div class="pure-g player-content">
+
                       <div class="pure-u-1-4 l-box">
                           <div class="station-logo">
                             <img class="pure-img" id="station_logo" src="" alt="item.station">
@@ -62,9 +85,9 @@
 
         </div>
 
-      <script src="js/plugins.js"></script>
-      <script src="js/vendor/ReconnectingWebSocket.js"></script>
-      <!-- <script src="js/main.js"></script> -->
+      <!-- <script src="js/plugins.js"></script> -->
+      <script src="js/vendor/reconnecting-websocket.min.js"></script>
+      <script src="js/ejs.min.js"></script>
       <script src="js/vue_sample.js"></script>
 
       <!-- <script src="https://cdn.jsdelivr.net/npm/vue"></script> -->

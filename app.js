@@ -7,8 +7,16 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var station = require('./routes/station');
+
 var fileup = require('./controller/fileclient.js');
 var app = express();
+
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'ejs');
+
+app.use('/',station);
+//app.use('/db',station);
+
 
 app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
@@ -17,11 +25,13 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/station', station);
 
-app.get('/db', function (req,res){
-  res.sendFile(path.join(__dirname,'/public/db.html'));  // body...
-});
+
+//app.use('/station', station);
+
+// app.get('/db', function (req,res){
+//   res.sendFile(path.join(__dirname,'/public/db.html'));  // body...
+// });
 
 // app.get('/file', function(req,res){
 
@@ -34,8 +44,7 @@ app.get('/db', function (req,res){
 // });
 
 
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'ejs');
+
 
 app.use(function(req, res, next) {
   res.redirect('/404.html');

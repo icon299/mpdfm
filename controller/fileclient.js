@@ -30,8 +30,8 @@ var download_file_httpget = function(url, callback) {
 };
 
 var saveasJSON = function(msg, callback) {
-  console.log('__dirname: ' + __dirname);
-  fs.writeFile(filename, JSON.stringify(msg), function(err){
+  // fs.writeFile(filename, JSON.stringify(msg), function(err){
+      fs.writeFile(filename, msg, function(err){
     if (err) {
       calback(err);
     }

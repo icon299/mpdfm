@@ -201,6 +201,21 @@ function sendPlay(play, callback) {
     });
 }
 
+function getAlbumart(url, callback){
+
+    sendCommands(cmd("listall", ['music/usbmount/usb0/']),
+        function(err, msg) {
+            if(err) {
+
+                callback(err);
+            } else {
+
+                var albumart = mpd.parseArrayMessage(msg);
+                callback(null, JSON.stringify(albumart));
+            }
+        });
+};
+
 var self = module.exports = {
 
     setup: function setup(options) {
@@ -239,5 +254,9 @@ var self = module.exports = {
 
     playlistSongs: function playlistSongs(playlist, callback) {
         getPlaylistSongs(playlist, callback);
+    },
+
+    albumArt: function albumArt(url, callback) {
+        getAlbumart(url, callback)
     }
 };

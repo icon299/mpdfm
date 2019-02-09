@@ -28,31 +28,27 @@ function app() {
                 wssDisconnect:  true,
                 mpdServerDisconnect: true
             }
-
         }
-
 
     this.appstart =  function () {
         connectWSS();
         updateElapsed();
-    };
+    }
 
     connectWSS = function() {
         var self = this;
-        //var url = 'ws://192.168.1.100:4200';//(location.port ? ':'+location.port: '');
         var url = 'ws://'+location.hostname+(location.port ? ':'+location.port: '');
-        //socket = new ReconnectingWebSocket(url, null, {debug: false, reconnectInterval: 3000});
-        socket = new ReconnectingWebSocket(url, null, {reconnectInterval: 10000});
-
+        socket = new ReconnectingWebSocket(url, null, {reconnectInterval: 3000});
         socket.onerror = socket.onclose = function(err) {
             data.errorState.wssDisconnect = true;
         };
-
         socket.onopen = function () {
                 data.errorState.wssDisconnect = false;
                 sendWSSMessage('REQUEST_DB_STATION_LIST', null);
         };
-
+        socket.onerror = function(err) {
+            console.log(err);
+        }
         socket.onmessage = function (message) {
             data.errorState.wssDisconnect = false;
             var msg = JSON.parse(message.data);
@@ -62,29 +58,22 @@ function app() {
                     break;
                 case "PLAYLISTS":
                     //showStantionList(msg.data);
-
                     break;
                 case "DB_STATION_LIST":
                     data.stationList = msg.data;
-                    makeList(data.stationList);
+                    //makeList(data.stationList);
+                    //renderStationList(msg.data);
                     sendWSSMessage('REQUEST_STATUS', null);
-
-                    // makeList(data.stationList);
                     break;
                 case "STATION_LIST":
                     data.stationList = msg.data;
-                    makeList(data.stationList);
+                    //makeList(data.stationList);
                     sendWSSMessage('REQUEST_STATUS', null);
-
-                    // makeList(data.stationList);
                     break;
                 case "STATUS":
                     timer.lastDisplayTimestamp = 0;
-
                     setPlayState(msg.data.state);
                     setCurrentStation(msg.data);
-
-
                     setSongName(msg.data.title, msg.data.album, msg.data.artist);
                     setElapsedTime(msg.data.elapsed);
                     break;
@@ -105,48 +94,37 @@ function app() {
                         if((Date.now()-lastMpdReconnectAttempt) >= 2500) {
                              lastMpdReconnectAttempt = Date.now();
                              sendWSSMessage('REQUEST_STATUS', null);
-
                          }
                         }
                         , 3000);
                     return;
             }
-
             data.errorState.mpdServerDisconnect = false;
         };
-
-
     };
 
     showStantionList = function(msg) {
-        makeList(msg);
+//        makeList(msg);
         msg.forEach(function(item) {
-
             sendWSSMessage('PLAYLISTSONGS', { playlist: item.playlist });
         });
     };
 
-
     onPlayButton = function(event) {
-
         switch(data.status) {
             case 'playing':
                 data.status = 'loading';
                 sendWSSMessage('PAUSE', null);
-                //console.log('PAUSE click events');
                 //document.getElementById('PlayerButton').src = src="img/play.svg";
-
                 break;
             case 'stopped':
             case 'paused':
                 data.status = 'loading';
                 sendWSSMessage('PLAY', null);
-                //console.log('PLAY click events')
                 //document.getElementById('PlayerButton').src = src="img/pause.svg";
                 break;
             default:
                 sendWSSMessage('REQUEST_STATUS', null);
-
                 break;
         }
 
@@ -194,17 +172,11 @@ function app() {
 
         changeDisplayTimer(timer.displayedTime);
         timer.lastDisplayTimestamp = Date.now();
-
-        // setTimeout(() => {
-        //     updateElapsed();
-        // }, timeout);
-
         if(data.status === 'playing' && (Date.now() - timer.lastMpdUpdateTimestamp) > 10000) {
             sendWSSMessage('REQUEST_ELAPSED', null);
         }
     };
 
-    //setInterval(updateElapsed(), 1000);
     setInterval(function(){
         updateElapsed()}, 1000);
 
@@ -237,34 +209,24 @@ function app() {
     setCurrentStation = function(msg) {
         var self = this;
         var found = false;
-
         data.stationList.forEach(function(stationData) {
-
             if(stationData.stream === msg.file) {
                 found = true;
                 document.getElementById('station_logo').src = stationData.logo;
                 document.getElementById('station').innerHTML = stationData.station;
-
                 // Don't do anything if the station did not chnage
                 if(!data.currentStation || data.currentStation.stream !== msg.file)
                     data.currentStation = station;
                 return;
             }
         });
-
         if(!found) {
-            //data.currentStation.name = msg.name;
-            //data.currentStation.file = msg.file;
-            //data.currentStation.logo = null;
             data.currentStation = null;
             document.getElementById('station_logo').src =  DefaultLogoImage;
         }
         document.getElementById('station_logo').addEventListener('click', function (event) {
             onPlayButton();
         });
-
-
-
     };
 
     setSongName = function(title, album, artist) {
@@ -308,7 +270,8 @@ function app() {
         try {
             socket.send(JSON.stringify(msg));
         } catch (error) {
-            data.errorState.wssDisconnect = true;
+            //data.errorState.wssDisconnect = true;
+            //showError('Can\'t connect to server...');
         }
     }
 
@@ -317,103 +280,103 @@ function app() {
     }
 
     showError = function(msg) {
-
         if(document.getElementById("error-container")) {
-
-            errorHeading.innerHTML += msg;
-
+            // var errorHeading =document.getElementById("eh")
+            // errorHeading.innerHTML += msg;
         } else {
+            var errorNode = document.getElementById("app");
+                var errorContainer = document.createElement('div');
+                errorContainer.className = "error-message";
+                errorContainer.id = "error-container";
+            errorNode.appendChild(errorContainer);
+            var errorContent = document.createElement('div');
+                errorContent.class = "pure-g error-content";
+            errorContainer.appendChild(errorContent);
+            var errorBox =  document.createElement('div');
+                errorBox.className = "pure-u-1 l-box";
+            errorContent.appendChild(errorBox);
+            var errorHeading = document.createElement('p');
+                errorHeading.className = "error-heading";
+                errorHeading.id = "eh";
+            errorBox.appendChild(errorHeading);
 
-        var errorNode = document.getElementById("app");
-            var errorContainer = document.createElement('div');
-            errorContainer.className = "error-message";
-            errorContainer.id = "error-container";
-        errorNode.appendChild(errorContainer);
-        var errorContent = document.createElement('div');
-            errorContent.class = "pure-g error-content";
-        errorContainer.appendChild(errorContent);
-        var errorBox =  document.createElement('div');
-            errorBox.className = "pure-u-1 l-box";
-        errorContent.appendChild(errorBox);
-        var errorHeading = document.createElement('p');
-            errorHeading.className = "error-heading";
-        errorBox.appendChild(errorHeading);
-
-        errorHeading.innerHTML = msg;
+            errorHeading.innerHTML = msg;
         }
-    }
+    };
 
-    makeList = function(listData) {
+    function renderStationList(data) {
+        // var stationscript = document.getElementById('stationscript').innerHTML;
+        // html = ejs.render(stationscript, {item: data});
+        // document.getElementById('rs').innerHTML = html;
+    };
 
-        var myNode = document.getElementById("rs");
-        while (myNode.firstChild) {
-            myNode.removeChild(myNode.firstChild);
-        }
+    // makeList = function(listData) {
+    //     var myNode = document.getElementById("rs");
+    //     while (myNode.firstChild) {
+    //         myNode.removeChild(myNode.firstChild);
+    //     }
 
-        var myNode = document.getElementById("error-message");
-        if (myNode) {
-            while (myNode.firstChild) {
-                myNode.removeChild(myNode.firstChild);
-            }
-            myNode.remove();
-        }
+    //     var myNode = document.getElementById("error-message");
+    //     if (myNode) {
+    //         while (myNode.firstChild) {
+    //             myNode.removeChild(myNode.firstChild);
+    //         }
+    //         myNode.remove();
+    //     }
 
-        listData.forEach(function (item) {
+    //     listData.forEach(function (item) {
 
-            var listContainer = document.createElement('div');
-            listContainer.className = "pure-g";
+    //         var listContainer = document.createElement('div');
+    //         listContainer.className = "pure-g";
 
-            listContainer.addEventListener('click', function (event) {
-                onPlayStation(item.stream);
-            });
+    //         listContainer.addEventListener('click', function (event) {
+    //             onPlayStation(item.stream);
+    //         });
 
-            var listBox = document.createElement('div');
-            listBox.className = "pure-u-1-4 l-box";
-            var stationLogo = document.createElement('div');
-            stationLogo.className = "station-logo";
-            var img = document.createElement('img');
-            img.className = "pure-img";
+    //         var listBox = document.createElement('div');
+    //         listBox.className = "pure-u-1-4 l-box";
+    //         var stationLogo = document.createElement('div');
+    //         stationLogo.className = "station-logo";
+    //         var img = document.createElement('img');
+    //         img.className = "pure-img";
 
-            listContainer.appendChild(listBox);
-            listBox.appendChild(stationLogo);
-            stationLogo.appendChild(img);
+    //         listContainer.appendChild(listBox);
+    //         listBox.appendChild(stationLogo);
+    //         stationLogo.appendChild(img);
 
-            var stationText = document.createElement('div');
-            stationText.className = "pure-u-3-4 station-text l-box2";
+    //         var stationText = document.createElement('div');
+    //         stationText.className = "pure-u-3-4 station-text l-box2";
 
-            var stationTextInside = document.createElement('div');
-            stationTextInside.className = "station-text-inside";
-            var stationHeading = document.createElement('p');
-            stationHeading.className = "station-heading";
-            var p = document.createElement('p');
+    //         var stationTextInside = document.createElement('div');
+    //         stationTextInside.className = "station-text-inside";
+    //         var stationHeading = document.createElement('p');
+    //         stationHeading.className = "station-heading";
+    //         var p = document.createElement('p');
 
-            stationText.appendChild(stationTextInside);
-            stationTextInside.appendChild(stationHeading);
-            stationTextInside.appendChild(p);
-
-
-            stationHeading.innerHTML = item.station;
-            p.innerHTML = item.desc;
-
-            img.src = item.logo;
+    //         stationText.appendChild(stationTextInside);
+    //         stationTextInside.appendChild(stationHeading);
+    //         stationTextInside.appendChild(p);
 
 
-            listContainer.appendChild(stationText);
+    //         stationHeading.innerHTML = item.station;
+    //         p.innerHTML = item.desc;
 
-            //var sepLine = document.createElement('hr');
-            //sepLine.className = "sep-line";
+    //         img.src = item.logo;
 
-            //<hr class="sep-line">
 
-            document.getElementById('rs').appendChild(listContainer);
-            //document.getElementById('rs').appendChild(sepLine);
-        });
+    //         listContainer.appendChild(stationText);
 
-    }
-}
+    //         //var sepLine = document.createElement('hr');
+    //         //sepLine.className = "sep-line";
+
+    //         //<hr class="sep-line">
+
+    //         document.getElementById('rs').appendChild(listContainer);
+    //         //document.getElementById('rs').appendChild(sepLine);
+    //     });
+
+    // }
+ }
 
 var mpdfm = new app();
 mpdfm.appstart();
-
-
-//makeError();

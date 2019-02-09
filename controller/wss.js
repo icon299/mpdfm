@@ -81,12 +81,11 @@ module.exports = {
                             } else{
 
                                 sendWSSMessage(ws, 'DB_STATION_LIST', msg);
+
                             }
                         });
                         break;
-
                     case "REQUEST_STATION_LIST":
-
                         fs.readFile(stationFile, 'utf8', function (err, data) {
                             if (err) {
                                 console.error('Can\'t read station file: "' + stationFile + '": ' + err);
@@ -102,7 +101,6 @@ module.exports = {
                             }
                         });
                         break;
-
                     case "REQUEST_STATUS":
                         mpdClient.getMpdStatus(function(err, status) {
                             if(err) {
@@ -112,7 +110,6 @@ module.exports = {
                             }
                         });
                         break;
-
                     case "REQUEST_ELAPSED":
                         mpdClient.getElapsed(function(err, elapsed) {
                             if(err) {
@@ -122,7 +119,6 @@ module.exports = {
                             }
                         });
                         break;
-
                     case "PLAY":
                         if(msg.data && msg.data.stream) {
                             mpdClient.playStation(msg.data.stream, function(err) {
@@ -138,7 +134,6 @@ module.exports = {
                             });
                         }
                         break;
-
                     case "PAUSE":
                         mpdClient.pause(function(err) {
                             if(err) {
@@ -164,26 +159,15 @@ module.exports = {
                             }
                         });
                         break;
-                    case "REQUEST_STATION_LIST_DB":
-                        sqlite.playLists(function(err,playlists) {
-                            if(err) {
-                                sendWSSMessage(ws, 'MPD_OFFLINE');
-                            } else {
-                                sendWSSMessage(ws, 'PLAYLISTS', playlists);
-                            }
-                        });
-                        break;
+
                     case "INSERT_STATION":
-                        console.log("INSERT: " + msg.data);
                         db.insert(msg.data, function (err, newDoc) {
                             if (err) {
                                 console.log("INSERT ERROR");
                             } else
                             sendWSSMessage(ws, 'DB_MESSAGE', newDoc);
                         })
-
                         break;
-
                     case "FILE_UPLOAD":
                         console.log("FILE_UPLOAD: " + msg.data);
                         fileup.download_logo( msg.data, function(err, msg) {
@@ -195,27 +179,29 @@ module.exports = {
                                 console.log("UPLOAD OK");
                             }
                         });
-
                         break;
                     case "SAVE_JSON":
                         console.log('json save event');
-                        fileup.savefileJSON(JSON.parse(msg.data), function(err, ret){
+                        fileup.savefileJSON(msg.data, function(err, ret){
                             if (err) {
                                 console.log(err);
                             } else
                             console.log('file ' + ret + ' saved');
                         })
-
-
+                        break;
+                    case "ALBUMART":
+                        console.log('ALBUMART');
+                        mpdClient.albumArt(msg.data, function(err, data){
+                            if (err) {
+                                console.log('Error say: ' + err);
+                            } else
+                            console.log('albumart: ' + data);
+                        })
                         break;
                 }
-
             });
-
         });
-
         mpdClient.onStatusChange(function(status) {
-
             broadcastMessage(wss, 'STATUS', status);
         });
     }

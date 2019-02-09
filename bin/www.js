@@ -12,7 +12,7 @@ var http = require('http');
 const WebSocket = require('ws');
 var wsApp = require('../controller/wss.js');
 var mpdClient = require('../controller/mpdclient.js');
-//var sql = require('../controller/sqlite.js');
+
 
 /**
  * Get port from environment and store in Express.
@@ -34,7 +34,8 @@ if(process.env.STATION_FILE) {
     process.exit(1);
   }
 } else {
-  console.log('Station file "' + path.join(__dirname, '../data/stations.json') + '" will be used')
+  //console.log('Station file "' + path.join(__dirname, '../data/stations.json') + '" will be used')
+  console.log('Station file "' + path.join(__dirname, '../data/station.db') + '" will be used')
 }
 
 /**

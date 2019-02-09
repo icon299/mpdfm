@@ -1,8 +1,6 @@
 
 var socket = null;
-
 var  wssDisconnect = true;
-
 var station_data = null;
 
 sendWSSMessage = function(type, data) {
@@ -17,32 +15,31 @@ sendWSSMessage = function(type, data) {
     }
 };
 
-    showError = function(msg) {
-        if(document.getElementById("error-container")) {
-            errorHeading.innerHTML += msg;
-        } else {
-          var errorNode = document.getElementById("app");
-              var errorContainer = document.createElement('div');
-              errorContainer.className = "error-message";
-              errorContainer.id = "error-container";
-          errorNode.appendChild(errorContainer);
-          var errorContent = document.createElement('div');
-              errorContent.class = "pure-g error-content";
-          errorContainer.appendChild(errorContent);
-          var errorBox =  document.createElement('div');
-              errorBox.className = "pure-u-1 l-box";
-          errorContent.appendChild(errorBox);
-          var errorHeading = document.createElement('p');
-              errorHeading.className = "error-heading";
-          errorBox.appendChild(errorHeading);
-
-          errorHeading.innerHTML = msg;
-        }
-    }
+showError = function(msg) {
+  if(document.getElementById("error-container")) {
+      errorHeading.innerHTML += msg;
+  } else {
+    var errorNode = document.getElementById("app");
+        var errorContainer = document.createElement('div');
+        errorContainer.className = "error-message";
+        errorContainer.id = "error-container";
+    errorNode.appendChild(errorContainer);
+    var errorContent = document.createElement('div');
+        errorContent.class = "pure-g error-content";
+    errorContainer.appendChild(errorContent);
+    var errorBox =  document.createElement('div');
+        errorBox.className = "pure-u-1 l-box";
+    errorContent.appendChild(errorBox);
+    var errorHeading = document.createElement('p');
+        errorHeading.className = "error-heading";
+    errorBox.appendChild(errorHeading);
+    errorHeading.innerHTML = msg;
+  }
+};
 
 connectWSS = function() {
   var url = 'ws://'+location.hostname+(location.port ? ':'+location.port: '');
-  socket = new ReconnectingWebSocket(url, null, {reconnectInterval: 10000});
+  socket = new ReconnectingWebSocket(url, null, {reconnectInterval: 3000});
 
   socket.onopen = function () {
       wssDisconnect = false;
@@ -56,13 +53,10 @@ connectWSS = function() {
     var msg = JSON.parse(message.data);
     switch(msg.type) {
       case "DB_STATION_LIST":
-      //station_data = JSON.stringify(msg.data);
+      station_data = JSON.stringify(msg.data);
         // var p = document.getElementById("json");
         // p.innerHTML = station_data;
         renderStationList(msg.data);
-
-
-
       break;
 
       case "DB_MESSAGE":
@@ -70,8 +64,7 @@ connectWSS = function() {
         var p = document.getElementById("json");
         p.innerHTML = 'Insert station: ' + msg.data.station + ' OK.';
         clearForm();
-
-        //data.stationList = msg.data;
+        data.stationList = msg.data;
         //makeList(data.stationList);
 //        sendWSSMessage('REQUEST_STATUS', null);
       break;
@@ -79,8 +72,6 @@ connectWSS = function() {
       console.log('UPLOAD_OK');
         var p = document.getElementById("json");
         p.innerHTML = 'UPLOAD OK :' + msg.data;
-
-
         //data.stationList = msg.data;
         //makeList(data.stationList);
 //        sendWSSMessage('REQUEST_STATUS', null);
@@ -90,14 +81,11 @@ connectWSS = function() {
       showError(msg.data);
         // var p = document.getElementById("json");
         // p.innerHTML = 'UPLOAD ERROR :' + msg.data;
-
-
         //data.stationList = msg.data;
         //makeList(data.stationList);
 //        sendWSSMessage('REQUEST_STATUS', null);
       break;
     }
-
     socket.onerror = socket.onclose = function(err) {
       wssDisconnect = true;
     };
@@ -105,24 +93,20 @@ connectWSS = function() {
 };
 
 function renderStationList(data) {
-
   var stationscript = document.getElementById('stationscript').innerHTML;
-
   html = ejs.render(stationscript, {item: data});
-
   document.getElementById('station').innerHTML = html;
 };
 
 function clearForm() {
-
  var form = document.forms["insertform"];
  form.sName.value = '';
  sDesc.value = '';
  sLogo.value = '';
  sStream.value = '';
-}
+};
 
- document.forms["insertform"].onsubmit = function(){
+document.forms["insertform"].onsubmit = function(){
   if (this.sStream.value != '') {
     var message = {
       station:this.sName.value,
@@ -130,26 +114,23 @@ function clearForm() {
       logo: this.sLogo.value,
       stream: this.sStream.value
     }
-  sendWSSMessage('INSERT_STATION', message)
+    sendWSSMessage('INSERT_STATION', message)
     return false;
   } else {
-  var p = document.getElementById("json");
-        p.innerHTML = 'Station stream required.';
-  return false;
-}
-}
-
-
+    var p = document.getElementById("json");
+    p.innerHTML = 'Station stream required.';
+    return false;
+  }
+};
 
 connectWSS();
 clearForm();
 
-
-
 var savetojson = document.getElementById("json-button");
 savetojson.addEventListener('click', function(e) {
-  sendWSSMessage('SAVE_JSON', station_data)
-  console.log('Click to save JSON file');
-  sendWSSMessage('FILE_UPLOAD', 'https://www.radiobells.com/stations/kuzbasfm.jpg')
+ // sendWSSMessage('ALBUMART', '/usbmount/usb0/1')
+   sendWSSMessage('SAVE_JSON', station_data)
+  // console.log('Click to save JSON file');
+  //sendWSSMessage('FILE_UPLOAD', 'https://www.radiobells.com/stations/kuzbasfm.jpg')
 });
 
