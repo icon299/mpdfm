@@ -267,6 +267,7 @@ function parseLsinfoMessage(msg, param) {
               throw new Error('Could not parse entry "' + lsline + '"')
             }
             if ((keyValue[1] === 'file') || (keyValue[1] === 'directory') || (keyValue[1] === 'playlist')) {
+
                 if (Object.keys(obj).length > 0)
                     results.push(obj);
                 var pathparse = path.parse(keyValue[2])
@@ -277,6 +278,7 @@ function parseLsinfoMessage(msg, param) {
             } else {
                 obj[keyValue[1]] = keyValue[2];
             }
+            
             console.log(keyValue[1])
             // if ((keyValue[1] === 'file') || (keyValue[1] === 'directory') || (keyValue[1] === 'playlist')) {
             //   var pathparse = path.parse(keyValue[2])

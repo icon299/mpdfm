@@ -42,15 +42,19 @@ var prepareItem = function(source) {
   param = typeof param !== 'undefined' ? param : 'all';
   
   mpdClient.getDirList(currDir, param, function (err, item){
-   res.send(item)
+   //res.send(item)
     
     
     // console.log(item)  
-    res.end()
+    res.render('dir',{item});
   })
   // res.end('Ok')
 
  })
+
+router.get('/progress', (req, res) => {
+  res.render('progressbar')
+})
 
 router.get('/db', function(req, res, next) {
     db.connect(function(err, count){
