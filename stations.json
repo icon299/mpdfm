@@ -358,5 +358,29 @@
       "stream":"http://jfm1.hostingradio.ru:14536/jlstream.mp3?a35b",
       "id":45,
       "_id":"CorFmGQLEURiTpp2"
+   },
+   {
+      "station":"Эльдорадио",
+      "desc":"Музыкальное наполнение эфира — зарубежные хиты начиная с 70-х годов и до наших дней.",
+      "logo":"http://online-red.com/images/radio-logo/eldoradio.jpg",
+      "stream":"http://emgspb.hostingradio.ru/eldoradio128.mp3?35bff118",
+      "id":46,
+      "_id":"bTvfA2UGMICbw8KS"
+   },
+   {
+      "station":"D100 Radio",
+      "desc":"D100 is online hit music station, playing today′s hottest hits",
+      "logo":"https://mytuner.global.ssl.fastly.net/media/tvos_radios/pGCCfVn33N.png",
+      "stream":"http://los.cdnstream.com/1119_128",
+      "id":47,
+      "_id":"VJGBC3ElvJJwPAyu"
+   },
+   {
+      "station":"Radio Monte Carlo",
+      "desc":"The world of Jazz classics, mixed with the summer heat of the Brazilian Bossa Nova...",
+      "logo":"http://online-red.com/images/radio-logo/monte-carlo.png",
+      "stream":"http://stream.zenolive.com/3g4dx2y6vreuv",
+      "id":48,
+      "_id":"yVapyJf8bJset4AS"
    }
 ]

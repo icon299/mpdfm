@@ -3,6 +3,9 @@
 var mpd = require('mpd');
 var cmd = mpd.cmd;
 var debug = require('debug')('mpd.fm:mpdclient');
+var fs = require('fs');
+var path = require('path')
+
 
 // Private
 var mpdClient = null;
@@ -20,7 +23,7 @@ function connect() {
 
     mpdStatus = Status.connecting;
     debug('Connecting');
-    mpdOptions.host = '192.168.1.200';
+    mpdOptions.host = '127.0.0.1';
     mpdClient = mpd.connect(mpdOptions);
 
 
@@ -34,6 +37,7 @@ function connect() {
                 sendStatusRequest(function(error, status) {
                     if(!error) {
                         updateClients.forEach(function(callback) {
+                            //console.log("UpdateClients: " + updateClients);
 
                             callback(status);
                         });
@@ -123,6 +127,17 @@ function sendPlayStation(stream, callback) {
     });
 }
 
+function sendPlayList(playlist, callback) {
+    sendCommands([cmd("clear", []), cmd("repeat", [1]), cmd("load", [playlist]), cmd("play", []) ],
+        function(err, msg) {
+            if (err) {
+                callback(err);
+            } else {
+                callback();
+            }
+    });
+}
+
 function sendPlay(callback){
     sendCommands([cmd("play", [])],
         function(err, msg) {
@@ -153,6 +168,7 @@ function getPlaylistSongs(playlist,callback){
                 callback(err);
             } else {
                 var playlistSong = mpd.parseArrayMessage(msg);
+                //var playlistSong = msg;
                 callback(null, playlistSong);
             }
         });
@@ -216,6 +232,60 @@ function getAlbumart(url, callback){
         });
 };
 
+function getDir(url, callback){
+    sendCommands([cmd ("lsinfo", [url])],
+        function(err, msg) {
+            if(err) {
+                callback(err);
+            } else {
+// fs.writeFile("lsinfo.txt", msg, function(error){
+//     if(error) throw error; // если возникла ошибка
+//     console.log("Асинхронная запись файла завершена. Содержимое файла:");
+//     var data = fs.readFileSync("lsinfo.txt", "utf8");
+//     console.log(data);  // выводим считанные данные
+// });
+                var dirContent = parseLsinfoMessage(msg);
+                console.log(dirContent)
+                // var dirContent = mpd.parseKeyValueMessage(msg);
+                 callback( null, dirContent);
+                // callback( null, msg);
+            }
+        });
+};
+
+function parseLsinfoMessage(msg) {
+  var results = [];
+  var obj = {};
+  // var 
+
+  msg.split('\n').forEach(function(p) {
+    if(p.length === 0) {
+      return;
+    }
+    console.log(p);
+    var keyValue = p.match(/([^ ]+): (.*)/);
+    // console.log(keyValue[1], ': ', keyValue[2])
+    if (keyValue == null) {
+      throw new Error('Could not parse entry "' + p + '"')
+    }
+    //console.log('keyValue: ',keyValue)
+    console.log(keyValue[1])
+    if ((keyValue[1] === 'file') || (keyValue[1] === 'directory') || (keyValue[1] === 'playlist')) {
+      var pathparse = path.parse(keyValue[2])
+
+      
+      obj = {};
+      obj.type = keyValue[1]
+      obj.parent = pathparse.dir//keyValue[2]
+      obj.name = pathparse.base//path.basename(keyValue[2])
+      // console.log('obj light: ',Object.keys(obj).length)
+      results.push(obj);
+    } 
+
+  });
+  return results;
+}
+
 var self = module.exports = {
 
     setup: function setup(options) {
@@ -248,7 +318,12 @@ var self = module.exports = {
         sendPlayStation(stream, callback);
     },
 
-    playLists: function playLists(callback) {
+    playPlayList: function playStation(playlist, callback) {
+        debug('play ' + playlist);
+        sendPlayList(playlist, callback);
+    },
+
+    getPlayLists: function getPlayLists(callback) {
         getPlaylists(callback);
     },
 
@@ -258,5 +333,8 @@ var self = module.exports = {
 
     albumArt: function albumArt(url, callback) {
         getAlbumart(url, callback)
+    },
+    getDirList: function getDirList( url, callback) {
+        getDir(url, callback)
     }
 };

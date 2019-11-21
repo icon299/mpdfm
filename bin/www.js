@@ -49,7 +49,7 @@ const wss = new WebSocket.Server({ server });
  * Set up MPD client
  */
 var mpd_port = parseInt(process.env.MPD_PORT) || 6600;
-var mpd_host = process.env.MPD_HOST || 'localhost';
+var mpd_host = process.env.MPD_HOST || '127.0.0.1';
 mpdClient.setup({port: mpd_port, host: mpd_host });
 
 //sql.setup();

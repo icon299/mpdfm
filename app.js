@@ -7,6 +7,7 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var station = require('./routes/station');
+// var musicbase = require('./routes/musicbase');
 
 var fileup = require('./controller/fileclient.js');
 var app = express();
@@ -15,6 +16,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
 app.use('/',station);
+// app.use('/mb', musicbase)
 //app.use('/db',station);
 
 
@@ -25,7 +27,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-
+process.on(`uncaughtException`, console.error);
 
 //app.use('/station', station);
 

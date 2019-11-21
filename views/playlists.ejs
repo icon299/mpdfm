@@ -12,11 +12,10 @@
     <link rel="manifest" href="site.webmanifest">
     <link rel="apple-touch-icon" href="favicon.png">
 
-    <!-- <link href="https://fonts.googleapis.com/css?family=Oswald:400,500&amp;subset=cyrillic" rel="stylesheet"> -->
+    <link href="https://fonts.googleapis.com/css?family=Oswald:400,500&amp;subset=cyrillic" rel="stylesheet">
 
     <link rel="stylesheet" href="css/pure-min.css">
     <link rel="stylesheet" href="css/main.css">
-    <link rel="stylesheet" href="css/font.css">
   </head>
   <body>
 
@@ -26,14 +25,9 @@
         <a href="/playlist">Playlists</a>
       </div>
     </div>
-<!--     <div class="sl">
-      <p>asd</p>
-    </div> -->
 
     <div id="app">
-
       <div class="content">
-
 
 <!--       <div class="log-message" style="display:none;">
         <div class="pure-g log-content">
@@ -46,15 +40,15 @@
         <div id="rs">
           <% if (item.length) { %>
             <% item.forEach(function(item){ %>
-              <div class="pure-g" onclick="onPlayStation('<%= item.stream %>')">
+              <div class="pure-g" onclick="onPlayList('<%= item.playlist %>')">
                 <div class="pure-u-1-4 l-box">
                   <div class="station-logo">
-                    <img class="pure-img" src="<%= item.logo %>" alt="<%= item.station %>">
+                    <img class="pure-img" src="/img/station_logo/melody.png" alt="<%= item.station %>">
                   </div>
                 </div>
                 <div class="pure-u-3-4 l-box2 station-text">
                   <div class="station-text-inside">
-                    <p class="station-heading"><%= item.station %></p>
+                    <p class="station-heading"><%= item.playlist %></p>
                     <p><%= item.desc %></p>
                   </div>
                 </div>

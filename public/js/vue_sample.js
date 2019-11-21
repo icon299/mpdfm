@@ -32,7 +32,7 @@ function app() {
 
     this.appstart =  function () {
         connectWSS();
-        updateElapsed();
+        //updateElapsed();
     }
 
     connectWSS = function() {
@@ -173,12 +173,13 @@ function app() {
         changeDisplayTimer(timer.displayedTime);
         timer.lastDisplayTimestamp = Date.now();
         if(data.status === 'playing' && (Date.now() - timer.lastMpdUpdateTimestamp) > 10000) {
-            sendWSSMessage('REQUEST_ELAPSED', null);
+            //sendWSSMessage('REQUEST_ELAPSED', null);
         }
     };
 
     setInterval(function(){
-        updateElapsed()}, 1000);
+    //    updateElapsed()
+    }, 1000);
 
     setElapsedTime = function(elapsed) {
         if(!isNaN(parseFloat(elapsed)) && isFinite(elapsed)) {

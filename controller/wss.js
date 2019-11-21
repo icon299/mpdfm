@@ -141,7 +141,7 @@ module.exports = {
                             }
                         });
                         break;
-                    case "PLAYLISTS":
+                    case "PLAYLIST":
                         mpdClient.playLists(function(err,playlists) {
                             if(err) {
                                 sendWSSMessage(ws, 'MPD_OFFLINE');
@@ -150,6 +150,15 @@ module.exports = {
                             }
                         });
                         break;
+                    case "PLAYPLAYLIST":
+                        //console.log(msg.data);
+                        mpdClient.playPlayList(msg.data.playlist, function(err) {
+                            if(err) {
+                                sendWSSMessage(ws, 'MPD_OFFLINE');
+                            }
+                        });
+                        break;
+
                     case "PLAYLISTSONGS":
                         mpdClient.playlistSongs(msg.data.playlist, function(err, playlistSongs) {
                             if(err) {
@@ -187,6 +196,7 @@ module.exports = {
                                 console.log(err);
                             } else
                             console.log('file ' + ret + ' saved');
+                            sendWSSMessage(ws, 'JSON_SAVED', ret);
                         })
                         break;
                     case "ALBUMART":

@@ -41,16 +41,18 @@ function insert(data, callback) {
     data["id"] = count+1;
   })
 
-
-
   db.insert(data, function (err,newData) {
     if(err) {
       console.log(err.message);
     } else {
-      callback(err, newData);
+      callback(null, newData);
     }
   });
 };
+
+function update(data, callback) {
+  db.update()
+}
 
 var self = module.exports = {
 

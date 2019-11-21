@@ -37,6 +37,28 @@ showError = function(msg) {
   }
 };
 
+
+showInfo = function(msg,callback) {
+  var infoText = document.getElementById("info-text");
+  infoText.innerHTML = msg;
+  var infoMessage = document.getElementById("info-message");
+  infoMessage.style = "visibility: visible";
+  setTimeout(function(){
+    infoMessage.style = "visibility: hidden";
+  },2000)
+  //callback(infoMessage);
+}
+
+onEditStation = function(id, station) {
+
+  //var form = document.forms["insertform"];
+  btnEdit.value ='xcxzczx';
+  sName.value = station ;
+  sDesc.value = id;
+  sLogo.value = '222';
+  sStream.value = '2222';
+};
+
 connectWSS = function() {
   var url = 'ws://'+location.hostname+(location.port ? ':'+location.port: '');
   socket = new ReconnectingWebSocket(url, null, {reconnectInterval: 3000});
@@ -56,7 +78,7 @@ connectWSS = function() {
       station_data = JSON.stringify(msg.data);
         // var p = document.getElementById("json");
         // p.innerHTML = station_data;
-        renderStationList(msg.data);
+        //renderStationList(msg.data);
       break;
 
       case "DB_MESSAGE":
@@ -79,6 +101,18 @@ connectWSS = function() {
       case "UPLOAD_ERROR":
       console.log('UPLOAD_ERROR');
       showError(msg.data);
+        // var p = document.getElementById("json");
+        // p.innerHTML = 'UPLOAD ERROR :' + msg.data;
+        //data.stationList = msg.data;
+        //makeList(data.stationList);
+//        sendWSSMessage('REQUEST_STATUS', null);
+      break;
+      case "JSON_SAVED":
+      console.log('JSON_SAVED');
+      showInfo("Station list saved to: " + msg.data, function(e){
+
+      });
+
         // var p = document.getElementById("json");
         // p.innerHTML = 'UPLOAD ERROR :' + msg.data;
         //data.stationList = msg.data;
