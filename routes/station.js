@@ -32,11 +32,16 @@ var prepareItem = function(source) {
 });
 
  router.get('/mb', function (req,res){
-  var currDir = req.query.d
+  var currDir = req.query.d;
+  var param = req.query.p;
+
   //console.log('CurrentDir: ', currDir)
-  if (currDir === undefined)
-    currDir = '/';
-  mpdClient.getDirList(currDir, function (err, item){
+  // if (currDir === undefined)
+  //   currDir = '/';
+  currDir = typeof currDir !== 'undefined' ? currDir : '/';
+  param = typeof param !== 'undefined' ? param : 'all';
+  
+  mpdClient.getDirList(currDir, param, function (err, item){
    res.send(item)
     
     

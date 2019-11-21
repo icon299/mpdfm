@@ -7,7 +7,6 @@ var mpdClient = require('../controller/mpdclient.js')
 const bodyParser = require('body-parser');
 
 
- router.get('/', function(req, res, next) {
-   
-    res.end('mb OK');
-  });
+router.get('/', function(req, res, next) {
+  res.end('mb OK');
+});

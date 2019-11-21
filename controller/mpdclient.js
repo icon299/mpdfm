@@ -232,7 +232,7 @@ function getAlbumart(url, callback){
         });
 };
 
-function getDir(url, callback){
+function getDir(url, param , callback){
     sendCommands([cmd ("lsinfo", [url])],
         function(err, msg) {
             if(err) {
@@ -244,7 +244,7 @@ function getDir(url, callback){
 //     var data = fs.readFileSync("lsinfo.txt", "utf8");
 //     console.log(data);  // выводим считанные данные
 // });
-                var dirContent = parseLsinfoMessage(msg);
+                var dirContent = parseLsinfoMessage(msg, param);
                 console.log(dirContent)
                 // var dirContent = mpd.parseKeyValueMessage(msg);
                  callback( null, dirContent);
@@ -253,37 +253,44 @@ function getDir(url, callback){
         });
 };
 
-function parseLsinfoMessage(msg) {
-  var results = [];
-  var obj = {};
-  // var 
+function parseLsinfoMessage(msg, param) {
+    var results = [];
+    var obj = {};
+        msg.split('\n').forEach((lsline) => {
+            if(lsline.length === 0) {
+                return;
+            }
+            console.log(lsline);
+            var keyValue = lsline.match(/([^ ]+): (.*)/);
+            // console.log(keyValue[1], ': ', keyValue[2])
+            if (keyValue == null) {
+              throw new Error('Could not parse entry "' + lsline + '"')
+            }
+            if ((keyValue[1] === 'file') || (keyValue[1] === 'directory') || (keyValue[1] === 'playlist')) {
+                if (Object.keys(obj).length > 0)
+                    results.push(obj);
+                var pathparse = path.parse(keyValue[2])
+                obj = {};
+                obj.type = keyValue[1]
+                obj.parent = pathparse.dir//keyValue[2]
+                obj.name = pathparse.base//path.basename(keyValue[2])
+            } else {
+                obj[keyValue[1]] = keyValue[2];
+            }
+            console.log(keyValue[1])
+            // if ((keyValue[1] === 'file') || (keyValue[1] === 'directory') || (keyValue[1] === 'playlist')) {
+            //   var pathparse = path.parse(keyValue[2])
+            //   obj = {};
+              // obj.type = keyValue[1]
+              // obj.parent = pathparse.dir//keyValue[2]
+              // obj.name = pathparse.base//path.basename(keyValue[2])
+              // console.log('obj light: ',Object.keys(obj).length)
+              
+            // } 
 
-  msg.split('\n').forEach(function(p) {
-    if(p.length === 0) {
-      return;
-    }
-    console.log(p);
-    var keyValue = p.match(/([^ ]+): (.*)/);
-    // console.log(keyValue[1], ': ', keyValue[2])
-    if (keyValue == null) {
-      throw new Error('Could not parse entry "' + p + '"')
-    }
-    //console.log('keyValue: ',keyValue)
-    console.log(keyValue[1])
-    if ((keyValue[1] === 'file') || (keyValue[1] === 'directory') || (keyValue[1] === 'playlist')) {
-      var pathparse = path.parse(keyValue[2])
-
-      
-      obj = {};
-      obj.type = keyValue[1]
-      obj.parent = pathparse.dir//keyValue[2]
-      obj.name = pathparse.base//path.basename(keyValue[2])
-      // console.log('obj light: ',Object.keys(obj).length)
-      results.push(obj);
-    } 
-
-  });
-  return results;
+        });
+        results.push(obj);
+    return results;
 }
 
 var self = module.exports = {
@@ -334,7 +341,7 @@ var self = module.exports = {
     albumArt: function albumArt(url, callback) {
         getAlbumart(url, callback)
     },
-    getDirList: function getDirList( url, callback) {
-        getDir(url, callback)
+    getDirList: function getDirList( url, param, callback) {
+        getDir(url, param, callback)
     }
 };
