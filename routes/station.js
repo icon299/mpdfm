@@ -41,7 +41,7 @@ var prepareItem = function(source) {
   currDir = typeof currDir !== 'undefined' ? currDir : '/';
   param = typeof param !== 'undefined' ? param : 'all';
   
-  mpdClient.getDirList(currDir, param, function (err, item){
+  mpdClient.getDirList(currDir, param, function (err, dirInfo, item){
    //res.send(item)
     
     

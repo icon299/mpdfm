@@ -245,9 +245,11 @@ function getDir(url, param , callback){
 //     console.log(data);  // выводим считанные данные
 // });
                 var dirContent = parseLsinfoMessage(msg, param);
+                var dirInfo = {};
+                dirInfo.dir = url;
                 console.log(dirContent)
                 // var dirContent = mpd.parseKeyValueMessage(msg);
-                 callback( null, dirContent);
+                 callback( null, dirInfo, dirContent);
                 // callback( null, msg);
             }
         });
