@@ -4,7 +4,7 @@
 <div class="custom-wrapper pure-g" id="menu">
     <div class="pure-u-1 pure-u-sm-1-5">
         <div class="pure-menu">
-            <a href="#" class="pure-menu-heading custom-brand">MPD.FM</a>
+            <a href="/" class="pure-menu-heading custom-brand">MPD.FM</a>
             <a href="#" class="custom-toggle" id="toggle"><s class="bar"></s><s class="bar"></s></a>
         </div>
     </div>
@@ -15,7 +15,7 @@
                 <li class="pure-menu-item"><a href="#" class="pure-menu-link">Radio</a></li>
                 <li class="pure-menu-item"><a href="#" class="pure-menu-link">Playlists</a></li>
                 <li class="pure-menu-item"><a href="/mb" class="pure-menu-link">Mucis Folders</a></li>
-                <li class="pure-menu-item"><a href="#" class="pure-menu-link">Settings</a></li>
+                <li class="pure-menu-item pure-menu-active" ><a href="#" class="pure-menu-link">ProgressBar</a></li>
 
             </ul>
         </div>
@@ -32,6 +32,13 @@
 
 <div class="content">
     <div id="app">
+        <div class="pure-g">
+            <div class="pure-u-1">
+                <div>
+                <img class="pure-img" id="station_logo" src="img/double_note.png" alt="item.station">
+                </div>
+            </div>
+        </div>
         <div class="pure-g">
             <div class="pure-u-1-5">
               
@@ -51,10 +58,27 @@
     var circle = new ProgressBar.Line('#progress', {
         color: '#CCCCCC',
         duration: 3000,
-        easing: 'easeInOut',
+        // easing: 'easeInOut',
         strokeWidth: 1,
-        trailWidth: 0.2
-    });
+        trailWidth: 0.2,
+
+        text: {
+            value: '0',
+            className: 'progress-text',
+            style: {
+                color: 'black',
+                position: 'absolute',
+                top: '30px',
+                padding: 0,
+                margin: 0,
+                transform: null
+            }
+        },
+        step: (state, shape) => {
+            //shape.path.setAttribute("stroke", state.color);
+            shape.setText(Math.round(shape.value() * 100) + ' %');
+        }
+    })
 
     circle.animate(1);
 };
