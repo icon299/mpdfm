@@ -12,8 +12,20 @@
   </head>
 
   <body>
+    <div class="pure-g">
+      <div class="pure-u-1">
+        <form class="pure-form" method="post" action="/mpd">
+          <fieldset>
+            <input type="text" name="command" /><br />
+            <input type="text" name="param" /><br />
+            
+            <button type="submit" class="pure-button pure-button-primary">Sign in</button>
+          </fieldset>
+        </form>
+      </div>
+    </div>
     <div>
-    {<%= itemJson %>}
+      <p><%=msg%></p>
     </div>
 
 

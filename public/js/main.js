@@ -1,7 +1,7 @@
 //"use strict";
 
 var socket = null;
-const DefaultSongText = '';
+const DefaultSongText = ' *** ';
 const DefaultMpdErrorText = 'Trying to reconnect...';
 //const DefaulLogoImage ='data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=';
 const DefaultLogoImage = "/img/station_logo/melody.png"
@@ -16,12 +16,16 @@ var timer = {
     lastDisplayTimestamp: 0
 };
 
+var timeInSec = 0;
+var currProgress = 0;
+
 function app() {
         data = {
             stationList: [ ],
             playlists: [ ],
             status: "loading",
             elapsed: '0:00',
+            duration: '0:00',
             song: DefaultSongText,
             currentStation: null,
             errorState: {
@@ -34,6 +38,25 @@ function app() {
     this.appstart =  function () {
         connectWSS();
         updateElapsed();
+        
+        // setInterval(updateProgressBar(timeInSec,data.duration), 10)
+    }
+
+    
+    function updateProgressBar(el, du) {
+
+        if (data.status =='playing') {
+        var step = (du)/10000;
+
+
+        this.currProgress = currProgress + step;
+
+        // console.log('progress: ',currProgress)
+
+        // nanobar.go( currProgress );
+        document.getElementById("myBar").style.width = this.currProgress + '%'; 
+    }
+        // this.currProgress = pr
     }
 
     connectWSS = function() {
@@ -79,9 +102,13 @@ function app() {
                     timer.lastDisplayTimestamp = 0;
                     setPlayState(msg.data.state);
                     setCurrentStation(msg.data);
-                    //console.log(msg.data);
-                    setSongName(msg.data.title, msg.data.album, msg.data.artist);
+                    console.log(msg.data);
+                    setSongName(msg.data.title, msg.data.album, msg.data.artist, msg.data.time);
                     setElapsedTime(msg.data.elapsed);
+
+                    // setInterval(function(){
+                    //     updateProgressBar(msg.data.elapsed, msg.data.time)}
+                    //     ,100);                    
                     break;
                 case "ELAPSED":
                     setElapsedTime(msg.data.elapsed);
@@ -192,6 +219,7 @@ function app() {
         if(data.status === 'playing' && (Date.now() - timer.lastMpdUpdateTimestamp) > 10000) {
 
             sendWSSMessage('REQUEST_ELAPSED', null);
+            console.log(data.elapsed)
         }
     };
 
@@ -210,17 +238,21 @@ function app() {
 
     setPlayState = function(state) {
         switch(state) {
-            case 'play':
+            case 'play': 
                 data.status = 'playing';
+                // document.getElementById('PlayerButton').src = "img/play.svg";
                 break;
             case 'stop':
                 data.status = 'stopped';
+                // document.getElementById('PlayerButton').src = "img/pause.svg";
                 break;
             case 'pause':
                 data.status = 'paused';
+                // document.getElementById('PlayerButton').src = "img/pause.svg";
                 break;
             default:
                 data.status = 'loading';
+                // document.getElementById('PlayerButton').src = "img/loading.svg";
                 break;
         }
     };
@@ -228,8 +260,10 @@ function app() {
     setCurrentStation = function(msg) {
         var self = this;
         var found = false;
+        // console.log('msg.file: ', msg.state)
         data.stationList.forEach(function(stationData) {
-
+ // console.log('datastream: ',stationData)
+//console.log('msg.file: ', msg)
             if(stationData.stream === msg.file) {
                 found = true;
                 document.getElementById('station_logo').src = stationData.logo;
@@ -238,6 +272,7 @@ function app() {
                 // Don't do anything if the station did not chnage
                 if(!data.currentStation || data.currentStation.stream !== msg.file)
                     data.currentStation = stationData;
+                console.log('data.currentStation: ',data.currentStation)
                 return;
             }
         });
@@ -254,11 +289,12 @@ function app() {
         document.getElementById('station_logo').addEventListener('click', function (event) {
             onPlayButton();
         });
+        
     };
 
-    setSongName = function(title, album, artist) {
-        //if(!title && !album && !artist && !this.currentStation) {
-        if(!title && !album && !artist) {
+    setSongName = function(title, album, artist, time) {
+        if(!title && !album && !artist && !this.currentStation) {
+        // if(!title && !album && !artist) {
             this.song = DefaultSongText;
         } else {
             var text = '';
@@ -273,10 +309,50 @@ function app() {
             }
             this.song = text;
         }
-        document.getElementById('song').innerHTML = this.song;
+        console.log('time', time)
+        
+        if (typeof time != 'undefined') {
+            data.duration = time;
+            var duration = convertTimeToString(time*1000);
+        } else {
+            var duration = '0:00'
+        }
+
+
+            document.getElementById('song').innerHTML = this.song;
+            document.getElementById('duration').innerHTML = duration;
+            // console.log('set data.duration ', time)
+        
+
+
     };
 
     changeDisplayTimer = function(ms) {
+        strToDisplay = convertTimeToString(ms);
+        // var timeInSec = ms/1000;
+        // var hours = Math.floor(timeInSec / 3600);
+        // var minutes = Math.floor((timeInSec / 60) - (hours * 60));
+        // var seconds = Math.floor(timeInSec - (hours * 3600) - (minutes * 60));
+        // var strToDisplay = (hours > 0) ? (hours+':') : '';
+        // strToDisplay += (hours > 0 && minutes < 10) ? ('0' + minutes + ':') : (minutes + ':');
+        // strToDisplay += (seconds < 10 ? '0' : '') + seconds;
+        this.elapsed = strToDisplay;
+        this.timeInSec = ms/1000;
+        this.currProgress = ((timeInSec*100)/data.duration);
+        document.getElementById("elapsed").innerHTML = this.elapsed;
+        document.getElementById("myBar").style.width = this.currProgress + '%';
+        //var pr = setInterval(updateProgressBar(timeInSec,data.duration), 10)
+
+        // nanobar.go( progress );
+    };
+
+    
+
+
+
+
+
+    function convertTimeToString (ms){
         var timeInSec = ms/1000;
         var hours = Math.floor(timeInSec / 3600);
         var minutes = Math.floor((timeInSec / 60) - (hours * 60));
@@ -284,9 +360,11 @@ function app() {
         var strToDisplay = (hours > 0) ? (hours+':') : '';
         strToDisplay += (hours > 0 && minutes < 10) ? ('0' + minutes + ':') : (minutes + ':');
         strToDisplay += (seconds < 10 ? '0' : '') + seconds;
-        this.elapsed = strToDisplay;
-        document.getElementById("elapsed").innerHTML = this.elapsed;
-    };
+        return strToDisplay;
+    } 
+        
+
+    
 
     sendWSSMessage = function(type, data) {
         var self = this;

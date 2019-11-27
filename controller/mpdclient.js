@@ -105,7 +105,7 @@ function sendCommands(commands, callback) {
 }
 
 function sendStatusRequest(callback) {
-    sendCommands([cmd("currentsong", []), cmd("status", []) ],
+    sendCommands([cmd("status", []), cmd("currentsong", []) ],
         function(err, msg) {
             if (err) {
                 callback(err);
@@ -255,6 +255,43 @@ function getDir(url, param , callback){
         });
 };
 
+function getAlbum (callback) {
+    sendCommands(cmd("list album", []), function(err, msg) {
+            if(err) {
+                callback(err);
+            } else {
+                callback(null, msg)
+            }
+        });
+}
+
+function getArtist (callback) {
+    sendCommands(cmd("urlhandlers", []), function(err, msg) {
+            if(err) {
+                callback(err);
+            } else {
+                callback(null, msg)
+            }
+        });
+}
+
+function testCommandMPD(command, param, callback) {
+    if (param != '')
+        var arg = [param];
+    else var arg = [];
+     
+    sendCommands(cmd(command, arg), function(err, msg) {
+            if(err) {
+                callback(err);
+            } else {
+                var msg = mpd.parseArrayMessage(msg);
+                msg = JSON.stringify(msg);
+                // console.log(msg)
+                callback(null, msg)
+            }
+        });   
+}
+
 function parseLsinfoMessage(msg, param) {
     var results = [];
     var obj = {};
@@ -291,7 +328,6 @@ function parseLsinfoMessage(msg, param) {
               // console.log('obj light: ',Object.keys(obj).length)
               
             // } 
-
         });
         results.push(obj);
     return results;
@@ -347,5 +383,14 @@ var self = module.exports = {
     },
     getDirList: function getDirList( url, param, callback) {
         getDir(url, param, callback)
+    },
+    getAlbumLib: function getAlbumLib(callback) {
+        getAlbum(callback)
+    },
+    getArtistLib: function getArtistLib(callback) {
+        getArtist(callback)
+    },
+    testCommand: function testCommand(cmd, arg, callback) {
+        testCommandMPD(cmd, arg, callback)
     }
 };

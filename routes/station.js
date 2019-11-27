@@ -31,26 +31,48 @@ var prepareItem = function(source) {
   });
 });
 
+router.get('/home', function(req, res, next) {
+    db.find({}).sort({id: 1}).exec(function (err, item) {
+    res.render('home',{item});
+  });
+});
+
+router.get('/lib', function(req, res, next) {
+    res.render('library');  
+});  
+
+router.get('/album', function(req, res, next) {
+    mpdClient.getArtistLib(function(err, item){
+      res.set({ 'content-type': 'application/json; charset=utf-8' });
+    res.send(item);  
+    })
+});
+
+router.get('/mpd', function(req, res) {
+  //mpdClient.testCommand('commands','', function(err,msg){
+    msg = '';
+  res.render('mpd',{msg});
+});
+
+router.post('/mpd', (req, res) => {
+  console.log(req.body);
+  mpdClient.testCommand(req.body.command,req.body.param, function(err,msg){
+    res.render('mpd', {msg});
+    //res.redirect(303,'/mpd');
+  });
+});
+
  router.get('/mb', function (req,res){
   var currDir = req.query.d;
   var param = req.query.p;
 
-  //console.log('CurrentDir: ', currDir)
-  // if (currDir === undefined)
-  //   currDir = '/';
   currDir = typeof currDir !== 'undefined' ? currDir : '/';
   param = typeof param !== 'undefined' ? param : 'all';
   
   mpdClient.getDirList(currDir, param, function (err, dirInfo, item){
-   //res.send(item)
-    
-    
-    // console.log(item)  
     res.render('dir',{item});
-  })
-  // res.end('Ok')
-
- })
+  });
+});
 
 router.get('/progress', (req, res) => {
   res.render('progressbar')
@@ -71,7 +93,6 @@ router.get('/db', function(req, res, next) {
       } else{
         //sendWSSMessage(ws, 'ERROR_READ_FILE', err);
         res.render('db',{item});
-
       }
     });
 });
@@ -91,31 +112,28 @@ router.put('/db', function(req, res){
 
 router.delete('/db', function(req, res) {
     var item = prepareItem(req.body);
-
     db.remove({ _id: item._id }, {}, function(err) {
         res.json(item);
     });
 });
 
 router.get('/pl', function(req,res) {
-
   mpdClient.getPlayLists(function(err,item){
     if (err) console.log(err)
     console.log(item);
     res.render('playlists',{item});
-
   })
 })
 
-router.get('/mpd', function(req, res) {
-  mpdClient.playlistSongs('Hits_80_90', function(err,item){
-    if (err) console.log(err)
-    //console.log(item);
-  var itemJson = JSON.stringify(item,null,['\t']);
-    res.render('mpd',{itemJson});
+// router.get('/mpd', function(req, res) {
+//   mpdClient.playlistSongs('Hits_80_90', function(err,item){
+//     if (err) console.log(err)
+//     //console.log(item);
+//   var itemJson = JSON.stringify(item,null,['\t']);
+//     res.render('mpd',{itemJson});
 
-  })
-})
+//   })
+// })
 
 router.get('/edit',(req, res) => {
   db.find({}).sort({id: 1}).exec(function (err, stations) {
