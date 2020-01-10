@@ -141,7 +141,7 @@ function sendStatusRequest(callback) {
                 mpdStatusOptions.random = status.random;
                 mpdStatusOptions.single = status.single;
                 mpdStatusOptions.consume = status.consume;
-                console.log("mpdOptions_st: ", mpdStatusOptions)
+                //console.log("mpdOptions_st: ", mpdStatusOptions)
                 callback(null, status);
             }
     });

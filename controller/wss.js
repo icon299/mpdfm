@@ -237,7 +237,6 @@ module.exports = {
                                 sendWSSMessage(ws, 'MPD_OFFLINE');
                             }
                         })
-
                         break;
                     case "NEXT":
                         mpdClient.nextsong(function(err){
@@ -286,10 +285,14 @@ module.exports = {
                                 sendWSSMessage(ws,'MPD_OPTION', msg.data)
                             }
                         })
+                        break;
                         // mpdClient.getOptions(msg.data, function(err, option){
                         //     console.log('wss', option)
                         //     sendWSSMessage(ws,'MPD_OPTION', msg.data)
                         // })
+                    case "HREF":
+                        console.log(msg);
+                    break;
 
                 }
             });

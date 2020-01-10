@@ -40,7 +40,7 @@ router.get('/radio', function(req, res, next) {
 router.get('/', function(req, res, next) {
   mpdClient.getQuenue(function(err,item){
     if (err) console.log(err)
-    console.log('item:',item.length);
+    // console.log('item:',item.length);
     res.render('home',{item});
   })
 //    res.render('home');

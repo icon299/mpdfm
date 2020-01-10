@@ -81,9 +81,10 @@ function app() {
 
         socket.onopen = function () {
                 data.errorState.wssDisconnect = false;
-                //sendWSSMessage('REQUEST_DB_STATION_LIST', null);
+                sendWSSMessage('REQUEST_DB_STATION_LIST', null);
+                sendWSSMessage('HREF',window.location.pathname);
                 // console.log('SOCKET OPEN AND req DB list')
-                sendWSSMessage('REQUEST_STATUS', null);
+                //sendWSSMessage('REQUEST_STATUS', null);
         };
         socket.onerror = function(err) {
             data.errorState.wssDisconnect = true;
